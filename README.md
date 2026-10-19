@@ -1,37 +1,82 @@
 # Final Ball
 
-Premier League 2025-26 chance networks: who sets up whom at every club.
+**Who creates for whom: a network analysis of every chance in the Premier League, 2025–26.**
 
-A network analysis of chance creation: every passer → shooter link becomes an edge in a per-club graph,
-players are scored with weighted HITS (hub / authority), squads split into Louvain communities, and
-clubs clustered into chance-creation styles with K-means on five club-level features.
+### [View the live site →](https://yashasvarma14.github.io/Final_Ball_Cluster_Analysis/)
 
-## site/
-The interactive website (static, no build step).
-- `index.html`: page markup
-- `css/style.css`: styles, in numbered sections that follow the page; the editorial layer at the end overrides earlier rules
-- `js/app.js`: the D3 front end, in numbered sections (config, helpers, crests, network renderer, hero, club grid, clustering, league panels, boot)
-- `data.json`: everything the page renders, built by the pipeline
-- `logos/`: club crests named by club code (ARS.png ... WOL.png) and PL.png for the opening screen
+Every shot that someone set up becomes a link between a passer and a shooter. Each club's links form a
+network, and network science turns those networks into a picture of how each team actually creates its
+chances: who the creators are, who the finishers are, which players work as a unit, and which clubs build
+their attacks the same way.
 
-Run it locally (it needs a local server because the page loads data.json):
+## What's on the site
 
-    cd site
-    python -m http.server 8000
+- **The networks.** All 20 clubs as passing networks, each opening into a full interactive view of its
+  players, their hub and authority scores, and every chance between any two of them.
+- **Clustering.** Clubs grouped into four chance-creation styles with K-means, shown in principal-component
+  space with a feature profile for each style.
+- **The league.** Rankings for assist entropy, top creators and top finishers, plus the standout duos.
+- **Method.** The full pipeline, the formulas behind each metric, and the caveats.
 
-then open http://localhost:8000
+Three link types can be switched at any time: key passes, goal assists, and chance quality (xG created).
 
-## pipeline/
-The Python behind the data and the static charts.
-- `build_site_data_understat.py`: turns `data/understat_2025_pack.json` (all 380 matches, every assisted shot, pulled from Understat) into `site/data.json`. Output path is `site/data.json` relative to the script, so point `OUT` at `../site/data.json` or copy the file over.
-- `metrics.py`: network building, assist entropy, weighted HITS (hub/authority), Louvain clusters, k-means style clusters
-- `viz.py` + `main.py`: static PNG charts (grid of all teams, rankings, top-hub star charts). `python main.py --source understat --season 2025` pulls Understat directly through the soccerdata package.
-- `build_site_data.py` + `data_sources.py`: the original StatsBomb 2015-16 version
+## Method
 
-Install: `pip install -r pipeline/requirements.txt`
+| Step               | What happens                                                                                                                       |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **Collect**        | Every shot of the season from Understat: 380 matches, the shooter, the credited passer, xG and pitch location.                      |
+| **Build networks** | One directed, weighted graph per club; an edge runs passer → shooter.                                                              |
+| **Score players**  | Weighted HITS (hub and authority via SVD), Louvain communities on the undirected graph, normalised Shannon entropy of the edges. |
+| **Cluster clubs**  | Five club-level features standardised and grouped with K-means (k = 4); PCA reduces them to two axes for the chart.               |
 
-## Formatting
-Site files are formatted with Prettier (`.prettierrc`), Python with Ruff (`pyproject.toml`), both at 110 columns.
+The five clustering features are assist entropy, top hub score, top authority score, top-duo share and
+top-3 creator share.
 
-## Club codes
-ARS AVL BOU BRE BHA BUR CHE CRY EVE FUL LEE LIV MCI MUN NEW NFO SUN TOT WHU WOL
+## Tech
+
+Python (pandas, NetworkX, scikit-learn, NumPy) for the analysis, and a static D3.js front end that reads one
+JSON file. No build step; the site is published straight from `site/` by GitHub Actions.
+
+## Repository layout
+
+```
+site/                  the website (published to GitHub Pages)
+  index.html           page markup
+  css/style.css        styles, in numbered sections that follow the page
+  js/app.js            the D3 front end, in numbered sections
+  data.json            everything the page renders, built by the pipeline
+  logos/               club crests by club code (ARS.png … WOL.png)
+pipeline/              the Python analysis
+  build_site_data_understat.py   Understat data → site/data.json
+  metrics.py                     networks, entropy, weighted HITS, Louvain, K-means
+  viz.py, main.py                static PNG charts
+  data/understat_2025_pack.json  the season's assisted shots
+.github/workflows/     the Pages deployment
+```
+
+## Development
+
+To work on the site locally, serve the `site/` folder (the page fetches `data.json`, so it needs a server
+rather than opening the file directly):
+
+```bash
+cd site
+python -m http.server 8000
+```
+
+To rebuild the data, install the pipeline's requirements and run the builder:
+
+```bash
+pip install -r pipeline/requirements.txt
+python pipeline/build_site_data_understat.py
+```
+
+Site files are formatted with Prettier (`.prettierrc`) and Python with Ruff (`pyproject.toml`).
+
+## Caveats
+
+- Understat credits one passer per shot, so second assists and earlier passes are not captured.
+- Shots with no credited pass (dribbles, rebounds, direct set pieces) are left out of the networks.
+- Assist networks are small samples; a handful of goals can move a club a long way.
+
+Data from Understat. Club crests belong to their clubs and are used for identification only.
