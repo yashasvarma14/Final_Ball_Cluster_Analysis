@@ -1711,7 +1711,7 @@
     if (window.FB_LOCAL)
       (function plLogo() {
         const img = $("#plLogo"),
-          srcs = ["logos/PL.svg", "logos/PL.png"];
+          srcs = ["logos/PL.png"];
         const next = () => {
           const src = srcs.shift();
           if (!src) return;
