@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Final Ball</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <nav class="nav gutter" aria-label="Site">
+      <div class="inner">
+        <a class="wordmark" href="#top" style="color: inherit; text-decoration: none">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <path d="M5 7 Q12 4 19 8" />
+              <path d="M5 7 Q8 13 12 18" />
+              <path d="M19 8 Q14 12 12 18" />
+              <path d="M5 7 Q11 10 19 8" opacity=".4" />
+            </g>
+            <circle cx="5" cy="7" r="2.3" fill="currentColor" />
+            <circle cx="19" cy="8" r="2.3" fill="currentColor" />
+            <circle cx="12" cy="18" r="2.3" fill="currentColor" />
+          </svg>
+          <span>Final Ball</span>
+        </a>
+        <div class="links">
+          <a href="#teams">Clubs</a><a href="#styles">Styles</a><a href="#league">League</a
+          ><a href="#method">How it works</a>
+        </div>
+        <div class="modes" id="modeSeg" role="group" aria-label="What counts as a link">
+          <button data-mode="kp" aria-pressed="true">Key passes</button>
+          <button data-mode="ga" aria-pressed="false">Assists</button>
+          <button data-mode="xg" aria-pressed="false">Chance quality</button>
+          <span class="thumb"></span>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero gutter" id="top">
+      <div class="inner">
+        <div class="heroGrid">
+          <div>
+            <div class="plRow">
+              <img class="plLogo" id="plLogo" alt="Premier League" hidden />
+              <span class="sep" id="plSep" hidden></span>
+              <p class="kicker"><i></i><span id="kick">Premier League · 2025–26 · Key passes</span></p>
+            </div>
+            <p class="eyebrow"><span>Case study</span>Network analysis · Premier League 2025–26</p>
+            <h1>Final <span>Ball</span></h1>
+            <p class="tagline">
+              Who creates for whom: mapping every chance in the Premier League as a network of passers and
+              shooters.
+            </p>
+            <p class="lede" id="lede"></p>
+            <ul class="methods" aria-label="Methods">
+              <li><button data-term="hits">Weighted HITS</button></li>
+              <li><button data-term="entropy">Assist entropy</button></li>
+              <li><button data-term="louvain">Louvain communities</button></li>
+              <li><button data-term="kmeans">K-means styles</button></li>
+            </ul>
+            <div class="ctaRow">
+              <a class="cta pri" href="#league" id="ctaClusters"
+                >Explore the clusters<svg viewBox="0 0 10 10" aria-hidden="true">
+                  <path
+                    d="M5 1.5 V8.5 M2 5.5 L5 8.5 L8 5.5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  /></svg
+              ></a>
+              <a class="cta sec" href="#method">Methodology</a>
+            </div>
+          </div>
+          <div class="heroViz">
+            <svg
+              id="hero"
+              viewBox="-560 -560 1120 1120"
+              role="img"
+              aria-label="Rotating team network preview"
+            ></svg>
+            <div class="hud" id="hud" aria-live="polite">
+              <div class="hc tl" data-term="entropy" tabindex="0">
+                <span class="hk">Assist entropy</span><b id="hEnt">—</b><span class="hs" id="hEntR"></span>
+              </div>
+              <div class="hc tr" data-term="kmeans" tabindex="0">
+                <span class="hk">Style cluster</span><b id="hSty">—</b
+                ><span class="hs">K-means on 5 features</span>
+              </div>
+              <div class="hc bl" data-term="louvain" tabindex="0">
+                <span class="hk">Communities</span><b id="hCom">—</b
+                ><span class="hs">Louvain groups found</span>
+              </div>
+              <div class="hc br" data-term="hits" tabindex="0">
+                <span class="hk">Top hub</span><b id="hHub">—</b><span class="hs" id="hHubV"></span>
+              </div>
+            </div>
+            <div class="crop" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            <p class="fig" id="heroFig">Fig. 01</p>
+            <div class="heroBadge">
+              <div class="bc" id="heroCrest"></div>
+              <div class="bn" id="heroName">—</div>
+              <div class="bs" id="heroSub">Key-pass network</div>
+            </div>
+            <div class="heroCtl">
+              <button class="ctl" id="heroPrev" aria-label="Previous club">
+                <svg viewBox="0 0 10 10">
+                  <path
+                    d="M7 1 L3 5 L7 9"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+              <button class="ctl" id="heroPlay" aria-label="Pause rotation">
+                <svg viewBox="0 0 10 10" id="heroPlayIc">
+                  <rect x="2" y="1.5" width="2.2" height="7" rx=".5" />
+                  <rect x="5.8" y="1.5" width="2.2" height="7" rx=".5" />
+                </svg>
+              </button>
+              <div class="prog" aria-hidden="true"><i id="heroProg"></i></div>
+              <button class="ctl" id="heroNext" aria-label="Next club">
+                <svg viewBox="0 0 10 10">
+                  <path
+                    d="M3 1 L7 5 L3 9"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section alt gutter" id="teams">
+      <div class="inner">
+        <div class="secHead">
+          <div>
+            <p class="sk">01 · The networks</p>
+            <h2>Twenty clubs, twenty networks.</h2>
+          </div>
+          <p>
+            Each ring is a club's most involved players. Each line is a passer-shooter link, thicker the more
+            it happened. Pick a club to open its full network.
+          </p>
+        </div>
+        <div class="glance" id="cMinis" role="group" aria-label="Clubs"></div>
+        <div class="stageCard" id="stageCard">
+          <div class="netCol" id="stage">
+            <div class="egoBar" id="egoBar" hidden>
+              <div class="seg" id="dirSeg" role="group" aria-label="Direction">
+                <span class="thumb"></span>
+                <button data-dir="out" aria-pressed="true">Who he sets up</button>
+                <button data-dir="in" aria-pressed="false">Who sets him up</button>
+              </div>
+              <button class="egoBack" id="egoExit">← Whole team</button>
+            </div>
+            <svg id="net" viewBox="-560 -560 1120 1120" role="img" aria-label="Team network"></svg>
+            <div class="tip" id="tip"></div>
+            <p class="netHint" id="hint">
+              Hover or tap a player to trace his links. Tap a line for the plays.
+            </p>
+          </div>
+          <aside class="infoCol" id="info" aria-live="polite"></aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gutter" id="styles">
+      <div class="inner">
+        <div class="secHead">
+          <div>
+            <p class="sk">02 · Clustering</p>
+            <h2 id="styTitle">Ways to create a chance.</h2>
+          </div>
+          <p>
+            K-means groups clubs by how their chances are built, not how many they make. Hover a style or a
+            club to explore it; click a crest to open that club.
+          </p>
+        </div>
+        <div class="styWrap">
+          <div class="panel styChart">
+            <div class="chartBox" id="cSty"></div>
+            <div class="styTip" id="styTip"></div>
+            <p class="axNote">
+              <b>Figure 2.</b> Clubs in principal-component space, coloured by K-means style. Axes are the
+              first two principal components of five standardised features; the closer two clubs sit, the more
+              alike they build chances. Key-pass networks.
+            </p>
+          </div>
+          <div class="styCards" id="cStyCards"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt gutter" id="league">
+      <div class="inner">
+        <div class="secHead">
+          <div>
+            <p class="sk">03 · The league</p>
+            <h2>The whole league, side by side.</h2>
+          </div>
+          <p id="leagueLede">Rankings and the standout numbers, switched with the tabs.</p>
+        </div>
+        <div class="bento" id="bento"></div>
+      </div>
+    </section>
+
+    <section class="section gutter" id="method">
+      <div class="inner">
+        <div class="secHead">
+          <div>
+            <p class="sk">04 · Method</p>
+            <h2>How it works.</h2>
+          </div>
+          <p>
+            From raw shot data to club styles in four steps. The analysis runs in Python; the site is a static
+            D3 front end reading one JSON file.
+          </p>
+        </div>
+        <ol class="pipe">
+          <li>
+            <span class="pn">01</span>
+            <h4>Collect</h4>
+            <p>
+              Every shot of the 2025–26 Premier League from Understat: 380 matches, the shooter, the player
+              credited with the pass, xG and pitch location.
+            </p>
+            <code>soccerdata · Understat</code>
+          </li>
+          <li>
+            <span class="pn">02</span>
+            <h4>Build networks</h4>
+            <p>
+              One directed graph per club. An edge runs passer → shooter, weighted by key passes, assists, or
+              the xG of the chances created.
+            </p>
+            <code>networkx.DiGraph</code>
+          </li>
+          <li>
+            <span class="pn">03</span>
+            <h4>Score players</h4>
+            <p>
+              Weighted HITS gives every player a hub and an authority score, Louvain splits the squad into
+              units, and entropy measures how spread out the chances are.
+            </p>
+            <code>numpy SVD · louvain_communities</code>
+          </li>
+          <li>
+            <span class="pn">04</span>
+            <h4>Cluster clubs</h4>
+            <p>
+              Five club-level features are standardised and grouped with K-means (k = 4, 20 restarts). PCA
+              flattens them to two axes for the chart.
+            </p>
+            <code>StandardScaler · KMeans · PCA</code>
+          </li>
+        </ol>
+        <div class="method">
+          <div>
+            <svg viewBox="0 0 40 40" aria-hidden="true">
+              <circle cx="20" cy="20" r="5" fill="var(--text)" />
+              <g stroke="var(--text)" stroke-width="2" stroke-linecap="round">
+                <path d="M20 20 L6 9" />
+                <path d="M20 20 L34 9" />
+                <path d="M20 20 L8 32" />
+                <path d="M20 20 L32 32" />
+              </g>
+              <g fill="var(--text-3)">
+                <circle cx="6" cy="9" r="3" />
+                <circle cx="34" cy="9" r="3" />
+                <circle cx="8" cy="32" r="3" />
+                <circle cx="32" cy="32" r="3" />
+              </g>
+            </svg>
+            <h4>Hub score</h4>
+            <p>High when a player feeds the teammates who get the most chances. The creators.</p>
+            <p class="fx">h = |u₁(A)|, the top left singular vector of the weighted adjacency matrix</p>
+          </div>
+          <div>
+            <svg viewBox="0 0 40 40" aria-hidden="true">
+              <circle cx="20" cy="20" r="5" fill="var(--text)" />
+              <g stroke="var(--text-3)" stroke-width="2" stroke-linecap="round">
+                <path d="M6 9 L17 17" />
+                <path d="M34 9 L23 17" />
+                <path d="M8 32 L17 23" />
+                <path d="M32 32 L23 23" />
+              </g>
+              <g fill="var(--text-3)">
+                <circle cx="6" cy="9" r="3" />
+                <circle cx="34" cy="9" r="3" />
+                <circle cx="8" cy="32" r="3" />
+                <circle cx="32" cy="32" r="3" />
+              </g>
+            </svg>
+            <h4>Authority score</h4>
+            <p>The reverse: high when the best creators keep looking for you. The finishers.</p>
+            <p class="fx">
+              a = |v₁(A)|, the top right singular vector, so hubs and authorities reinforce each other
+            </p>
+          </div>
+          <div>
+            <svg viewBox="0 0 40 40" aria-hidden="true">
+              <g fill="var(--text)">
+                <rect x="5" y="12" width="5" height="22" rx="1.5" />
+                <rect x="13" y="9" width="5" height="25" rx="1.5" />
+                <rect x="21" y="14" width="5" height="20" rx="1.5" />
+                <rect x="29" y="11" width="5" height="23" rx="1.5" />
+              </g>
+            </svg>
+            <h4>Entropy</h4>
+            <p>
+              How evenly chances are spread across every passer-shooter pair, from 0 to 1. Low means a few
+              duos carry the team.
+            </p>
+            <p class="fx">H = −Σ pᵢ ln pᵢ / ln n, with pᵢ the share of chances on pair i</p>
+          </div>
+          <div>
+            <svg viewBox="0 0 40 40" aria-hidden="true">
+              <circle cx="13" cy="15" r="9" fill="var(--text)" opacity=".18" />
+              <circle cx="27" cy="26" r="9" fill="var(--text-3)" opacity=".25" />
+              <g fill="var(--text)">
+                <circle cx="10" cy="13" r="2.6" />
+                <circle cx="16" cy="17" r="2.6" />
+                <circle cx="12" cy="19" r="2.6" />
+              </g>
+              <g fill="var(--text-3)">
+                <circle cx="25" cy="24" r="2.6" />
+                <circle cx="30" cy="28" r="2.6" />
+                <circle cx="26" cy="30" r="2.6" />
+              </g>
+            </svg>
+            <h4>Clusters</h4>
+            <p>
+              Groups of players who combine with each other more than with the rest, found with the Louvain
+              method.
+            </p>
+            <p class="fx">maximise modularity Q on the undirected graph, both pass directions summed</p>
+          </div>
+        </div>
+        <div class="notes">
+          <div>
+            <h5>Built with</h5>
+            <ul class="stack">
+              <li>Python</li>
+              <li>pandas</li>
+              <li>NetworkX</li>
+              <li>scikit-learn</li>
+              <li>NumPy</li>
+              <li>D3.js</li>
+            </ul>
+            <h5 style="margin-top: 22px">Data</h5>
+            <p>
+              Understat match feeds, Premier League 2025–26. Three link types: key passes, goal assists, and
+              chance quality (xG created).
+            </p>
+          </div>
+          <div>
+            <h5>Caveats</h5>
+            <ul class="cav">
+              <li>
+                Understat credits one passer per shot, so second assists and the passes before them are
+                invisible.
+              </li>
+              <li>
+                Shots with no credited pass (dribbles, rebounds, direct set pieces) are left out of the
+                networks.
+              </li>
+              <li>
+                Team charts show the most involved players to stay readable; the club metrics use the whole
+                squad.
+              </li>
+              <li>Assist networks are small samples, so a handful of goals can move a club a long way.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="gutter">
+      <div class="inner">
+        <span
+          ><b>Final Ball</b> · A network analysis of chance creation, Premier League 2025–26. Data: Understat
+          match feeds, all 380 matches. A “key pass” is the last pass before a shot.</span
+        >
+        <span>Club crests belong to their clubs and are used here for identification only.</span>
+      </div>
+    </footer>
+
+    <div class="scrim" id="scrim"></div>
+    <div class="term" id="term" role="tooltip" hidden></div>
+    <aside
+      class="sheet"
+      id="sheet"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Plays between two players"
+    ></aside>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
