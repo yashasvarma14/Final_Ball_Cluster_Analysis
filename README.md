@@ -79,4 +79,8 @@ Site files are formatted with Prettier (`.prettierrc`) and Python with Ruff (`py
 - Shots with no credited pass (dribbles, rebounds, direct set pieces) are left out of the networks.
 - Assist networks are small samples; a handful of goals can move a club a long way.
 
+## Acknowledgements
+
+The website's design and the clustering visualisation were created with the help of Claude (Anthropic).
+
 Data from Understat. Club crests belong to their clubs and are used for identification only.
