@@ -2,7 +2,7 @@
 
 **Who creates for whom: a network analysis of every chance in the Premier League, 2025–26.**
 
-### [View the live site →](https://yashasvarma14.github.io/Final_Ball_Cluster_Analysis/)
+### [View the live site →](https://yashasvarma14.github.io/final-ball/)
 
 Every shot that someone set up becomes a link between a passer and a shooter. Each club's links form a
 network, and network science turns those networks into a picture of how each team actually creates its
